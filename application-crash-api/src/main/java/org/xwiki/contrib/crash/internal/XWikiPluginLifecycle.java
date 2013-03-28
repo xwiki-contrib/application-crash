@@ -20,9 +20,11 @@
 package org.xwiki.contrib.crash.internal;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginLifeCycle;
@@ -31,10 +33,7 @@ import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xwiki.contrib.crash.CrashConfiguration;
-import org.xwiki.model.reference.DocumentReferenceResolver;
-import org.xwiki.model.reference.EntityReferenceSerializer;
-import org.xwiki.query.QueryManager;
+import org.xwiki.model.EntityType;
 
 public class XWikiPluginLifecycle extends PluginLifeCycle
 {
@@ -55,24 +54,12 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
      */
     private final FS confFS = new FS();
 
-    private CrashConfiguration configuration;
+    private XWikiComponentReferences componentReferences;
 
-    private QueryManager queryManager;
-
-    private DocumentReferenceResolver<String> referenceResolver;
-
-    private EntityReferenceSerializer<String> referenceSerializer;
-
-    public XWikiPluginLifecycle(ClassLoader baseLoader, CrashConfiguration configuration,
-        QueryManager queryManager,
-        DocumentReferenceResolver<String> referenceResolver,
-        EntityReferenceSerializer<String> referenceSerializer)
+    public XWikiPluginLifecycle(ClassLoader baseLoader, XWikiComponentReferences componentReferences)
     {
         this.loader = baseLoader;
-        this.configuration = configuration;
-        this.queryManager = queryManager;
-        this.referenceResolver = referenceResolver;
-        this.referenceSerializer = referenceSerializer;
+        this.componentReferences = componentReferences;
     }
 
     public void start()
@@ -96,16 +83,31 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
             confFS,
             loader);
 
+        // HACK
+        /*
+        try {
+            Field executorField = PluginContext.class.getDeclaredField("scanner");
+            executorField.setAccessible(true);
+            executorField.set(context,
+                new ScheduledThreadPoolExecutor(1,
+                    new XWikiContextualizedThreadFactory(this.componentReferences.execution,
+                        this.componentReferences.executionContextManager, this.componentReferences.stubContextProvider,
+                        this.componentReferences.defaultEntityReferenceValueProvider.getDefaultValue(
+                            EntityType.WIKI))));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to hack Crash!", e);
+        }*/
+
         Properties props = new Properties();
-        props.setProperty("crash.ssh.port", "" + this.configuration.getSSHPort());
+        props.setProperty("crash.ssh.port", "" + this.componentReferences.configuration.getSSHPort());
 
         // TODO: Plug onto XWiki's auth
         props.setProperty("crash.auth", "simple");
-        String username = this.configuration.getSSHUserName();
+        String username = this.componentReferences.configuration.getSSHUserName();
         if (username != null) {
             props.setProperty("crash.auth.simple.username", username);
         }
-        String password = this.configuration.getSSHPassword();
+        String password = this.componentReferences.configuration.getSSHPassword();
         if (password != null) {
             props.setProperty("crash.auth.simple.password", password);
         }
@@ -120,7 +122,7 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
         this.confFS.mount(this.loader, Path.get("/crash/"));
 
         // Mount the XWiki FS Driver
-        XWikiFSDriver driver = new XWikiFSDriver(this.queryManager, this.referenceResolver, this.referenceSerializer);
+        XWikiFSDriver driver = new XWikiFSDriver(this.componentReferences);
         this.cmdFS.mount(driver);
 
         context.refresh();
