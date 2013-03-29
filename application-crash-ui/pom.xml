@@ -29,52 +29,48 @@
     <artifactId>application-crash</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>application-crash-api</artifactId>
-  <name>XWiki Contrib - CRaSH Application - API</name>
-  <packaging>jar</packaging>
+  <artifactId>application-crash-ui</artifactId>
+  <name>XWiki Contrib - CRaSH Application - UI</name>
+  <packaging>xar</packaging>
   <description>Integrates CRaSH in XWiki</description>
+  <properties>
+    <!-- Don't run CLIRR here since there's no Java code. -->
+    <xwiki.clirr.skip>true</xwiki.clirr.skip>
+    <!-- Name to display by the Extension Manager -->
+    <xwiki.extension.name>CRaSH Integration</xwiki.extension.name>
+  </properties>
   <dependencies>
-    <dependency>
-      <groupId>org.xwiki.commons</groupId>
-      <artifactId>xwiki-commons-configuration-api</artifactId>
-      <version>${commons.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.commons</groupId>
-      <artifactId>xwiki-commons-observation-api</artifactId>
-      <version>${commons.version}</version>
-    </dependency>
+    <!-- Needed for testing the start/stop of Crash from the Admin UI -->
     <dependency>
       <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-platform-model</artifactId>
+      <artifactId>xwiki-platform-administration-ui</artifactId>
       <version>${platform.version}</version>
+      <type>xar</type>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-platform-query-xwql</artifactId>
-      <version>${platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-platform-oldcore</artifactId>
-      <version>${platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.core</artifactId>
-      <version>1.2.0-cr11</version>
-    </dependency>
-    <dependency>
-      <groupId>org.crsh</groupId>
-      <artifactId>crsh.shell.ssh</artifactId>
-      <version>1.2.0-cr11</version>
-      <exclusions>
-        <!-- We want to use SLF4J -->
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>application-crash-api</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
+  <build>
+    <!-- Needed to add support for the XAR packaging -->
+    <extensions>
+      <extension>
+        <groupId>org.xwiki.commons</groupId>
+        <artifactId>xwiki-commons-tool-xar-handlers</artifactId>
+        <version>${commons.version}</version>
+      </extension>
+    </extensions>
+    <plugins>
+      <!-- The XAR packaging uses the XAR plugin and thus we need to define what version to use -->
+      <plugin>
+        <groupId>org.xwiki.commons</groupId>
+        <artifactId>xwiki-commons-tool-xar-plugin</artifactId>
+        <version>${commons.version}</version>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -80,7 +80,7 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
         Iterable<DocumentReference> result;
         initializeXWikiContext();
         try {
-            Query query = this.componentReferences.queryManager.createQuery("from doc.object(CRaSH.CRaSHClass) as crashCommand",
+            Query query = this.componentReferences.queryManager.createQuery("from doc.object(Crash.CrashCommandClass) as crashCommand",
                 Query.XWQL);
             List<String> stringDocumentReferences = query.execute();
             List<DocumentReference> documentReferences = new ArrayList<DocumentReference>();
@@ -100,7 +100,7 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
         long lastModifiedDate;
         initializeXWikiContext();
         try {
-            Query query = this.componentReferences.queryManager.createQuery("select distinct doc.date from Document doc, doc.object(CRaSH.CRaSHClass) as crashCommand where doc.fullName = :docName",
+            Query query = this.componentReferences.queryManager.createQuery("select distinct doc.date from Document doc, doc.object(Crash.CrashCommandClass) as crashCommand where doc.fullName = :docName",
                 Query.XWQL);
             query.bindValue("docName", this.componentReferences.referenceSerializer.serialize(handle));
             List<Date> lastModifiedDates = query.execute();
@@ -119,7 +119,7 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
         initializeXWikiContext();
         try {
             Query query = this.componentReferences.queryManager.createQuery(
-                "select distinct crashCommand.command from Document doc, doc.object(CRaSH.CRaSHClass) as crashCommand where doc.fullName = :docName",
+                "select distinct crashCommand.command from Document doc, doc.object(Crash.CrashCommandClass) as crashCommand where doc.fullName = :docName",
                 Query.XWQL);
             query.bindValue("docName", this.componentReferences.referenceSerializer.serialize(handle));
             List<String> commands = query.execute();

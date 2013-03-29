@@ -19,62 +19,21 @@
  */
 package org.xwiki.contrib.crash.internal;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.xwiki.bridge.event.ApplicationReadyEvent;
 import org.xwiki.component.annotation.Component;
-import org.xwiki.component.manager.ComponentLifecycleException;
-import org.xwiki.component.phase.Disposable;
-import org.xwiki.context.Execution;
-import org.xwiki.context.ExecutionContextManager;
-import org.xwiki.contrib.crash.CrashConfiguration;
-import org.xwiki.model.reference.DocumentReferenceResolver;
-import org.xwiki.model.reference.EntityReferenceSerializer;
-import org.xwiki.model.reference.EntityReferenceValueProvider;
 import org.xwiki.observation.EventListener;
 import org.xwiki.observation.event.Event;
-import org.xwiki.query.QueryManager;
-
-import com.xpn.xwiki.util.XWikiStubContextProvider;
 
 @Component
-@Named("Crash")
+@Named("crash")
 @Singleton
-public class CrashEventListener implements EventListener, Disposable
+public class CrashEventListener implements EventListener
 {
-    @Inject
-    private CrashConfiguration configuration;
-
-    @Inject
-    private QueryManager queryManager;
-
-    @Inject
-    @Named("default")
-    private DocumentReferenceResolver<String> defaultReferenceResolver;
-
-    @Inject
-    @Named("local")
-    private EntityReferenceSerializer<String> referenceSerializer;
-
-    @Inject
-    private Execution execution;
-
-    @Inject
-    private ExecutionContextManager executionContextManager;
-
-    @Inject
-    private XWikiStubContextProvider stubContextProvider;
-
-    @Inject
-    private EntityReferenceValueProvider defaultEntityReferenceValueProvider;
-
-    private XWikiPluginLifecycle lifecycle;
-
     @Override
     public String getName()
     {
@@ -84,34 +43,11 @@ public class CrashEventListener implements EventListener, Disposable
     @Override
     public List<Event> getEvents()
     {
-        // Note that we listen to the Application Ready event and not the Applicatjon Started event since the
-        // Crash init may call our dynamic FSDriver implementation and it requires querying the wiki for locating
-        // Crash commands that may have been add to wiki pages.
-        return Arrays.<Event>asList(new ApplicationReadyEvent());
+        return Collections.EMPTY_LIST;
     }
 
     @Override
     public void onEvent(Event event, Object source, Object data)
     {
-        // Initialize Crash
-        XWikiComponentReferences componentReferences = new XWikiComponentReferences();
-        componentReferences.configuration = this.configuration;
-        componentReferences.defaultEntityReferenceValueProvider = this.defaultEntityReferenceValueProvider;
-        componentReferences.execution = this.execution;
-        componentReferences.executionContextManager = this.executionContextManager;
-        componentReferences.queryManager = this.queryManager;
-        componentReferences.referenceResolver = this.defaultReferenceResolver;
-        componentReferences.referenceSerializer = this.referenceSerializer;
-        componentReferences.stubContextProvider = this.stubContextProvider;
-
-        this.lifecycle =
-            new XWikiPluginLifecycle(Thread.currentThread().getContextClassLoader(), componentReferences);
-        this.lifecycle.start();
-    }
-
-    @Override
-    public void dispose() throws ComponentLifecycleException
-    {
-        this.lifecycle.stop();
     }
 }
