@@ -26,6 +26,7 @@ import org.xwiki.model.reference.DocumentReferenceResolver;
 import org.xwiki.model.reference.EntityReferenceSerializer;
 import org.xwiki.model.reference.EntityReferenceValueProvider;
 import org.xwiki.query.QueryManager;
+import org.xwiki.script.service.ScriptServiceManager;
 
 import com.xpn.xwiki.util.XWikiStubContextProvider;
 
@@ -46,4 +47,6 @@ public class XWikiComponentReferences
     public XWikiStubContextProvider stubContextProvider;
 
     public EntityReferenceValueProvider defaultEntityReferenceValueProvider;
+
+    public ScriptServiceManager scriptServiceManager;
 }

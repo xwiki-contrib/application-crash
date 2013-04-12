@@ -29,15 +29,9 @@ import java.util.List;
 import org.crsh.vfs.spi.AbstractFSDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xwiki.context.ExecutionContext;
-import org.xwiki.context.ExecutionContextException;
-import org.xwiki.model.EntityType;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.query.Query;
 import org.xwiki.query.QueryException;
-
-import com.xpn.xwiki.XWikiContext;
-import com.xpn.xwiki.web.XWikiURLFactory;
 
 public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
 {
@@ -46,6 +40,8 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
     private XWikiComponentReferences componentReferences;
 
     private static final DocumentReference ROOT = new DocumentReference("crash", "crash", "crash");
+
+    private XWikiContextInitializer initializer = new XWikiContextInitializer();
 
     public XWikiFSDriver(XWikiComponentReferences componentReferences)
     {
@@ -64,7 +60,7 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
         if (handle.equals(ROOT)) {
             result = "Root";
         } else {
-            initializeXWikiContext();
+            this.initializer.initalize(this.componentReferences);
             try {
                 Query query = this.componentReferences.queryManager.createQuery(
                     "select distinct crashCommand.name from Document doc, doc.object(Crash.CrashCommandClass) as crashCommand where doc.fullName = :docName",
@@ -88,7 +84,7 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
     @Override public Iterable<DocumentReference> children(DocumentReference handle) throws IOException
     {
         Iterable<DocumentReference> result;
-        initializeXWikiContext();
+        this.initializer.initalize(this.componentReferences);
         try {
             Query query = this.componentReferences.queryManager.createQuery("from doc.object(Crash.CrashCommandClass) as crashCommand",
                 Query.XWQL);
@@ -108,7 +104,7 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
     @Override public long getLastModified(DocumentReference handle) throws IOException
     {
         long lastModifiedDate;
-        initializeXWikiContext();
+        this.initializer.initalize(this.componentReferences);
         try {
             Query query = this.componentReferences.queryManager.createQuery("select distinct doc.date from Document doc, doc.object(Crash.CrashCommandClass) as crashCommand where doc.fullName = :docName",
                 Query.XWQL);
@@ -126,7 +122,7 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
     {
         InputStream result;
 
-        initializeXWikiContext();
+        this.initializer.initalize(this.componentReferences);
         try {
             Query query = this.componentReferences.queryManager.createQuery(
                 "select distinct crashCommand.command from Document doc, doc.object(Crash.CrashCommandClass) as crashCommand where doc.fullName = :docName",
@@ -138,36 +134,5 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
             throw new IOException(String.format("Failed to get Crash command for [%s]", handle), e);
         }
         return result;
-    }
-
-    private void initializeXWikiContext()
-    {
-        ExecutionContext context = this.componentReferences.execution.getContext();
-        if (context == null) {
-            // Create a clean Execution Context
-            context = new ExecutionContext();
-
-            try {
-                this.componentReferences.executionContextManager.initialize(context);
-            } catch (ExecutionContextException e) {
-                throw new RuntimeException("Failed to initialize IRC Bot's execution context", e);
-            }
-
-            // Bridge with old XWiki Context, required for old code.
-            XWikiContext xwikiContext = this.componentReferences.stubContextProvider.createStubContext();
-            context.setProperty(XWikiContext.EXECUTIONCONTEXT_KEY, xwikiContext);
-
-            // Ensure that the Servlet URL Factory is used since the Notifications Event Listener needs to compute
-            // External URLs (for example).
-            XWikiURLFactory urlf = xwikiContext.getWiki().getURLFactoryService().createURLFactory(
-                XWikiContext.MODE_SERVLET, xwikiContext);
-            xwikiContext.setURLFactory(urlf);
-
-            // Set the current wiki
-            xwikiContext.setDatabase(this.componentReferences.defaultEntityReferenceValueProvider.getDefaultValue(
-                EntityType.WIKI));
-
-            this.componentReferences.execution.pushContext(context);
-        }
     }
 }

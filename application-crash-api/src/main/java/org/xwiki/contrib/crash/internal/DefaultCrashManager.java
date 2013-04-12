@@ -32,6 +32,7 @@ import org.xwiki.model.reference.DocumentReferenceResolver;
 import org.xwiki.model.reference.EntityReferenceSerializer;
 import org.xwiki.model.reference.EntityReferenceValueProvider;
 import org.xwiki.query.QueryManager;
+import org.xwiki.script.service.ScriptServiceManager;
 
 import com.xpn.xwiki.util.XWikiStubContextProvider;
 
@@ -65,6 +66,9 @@ public class DefaultCrashManager implements CrashManager
     @Inject
     private EntityReferenceValueProvider defaultEntityReferenceValueProvider;
 
+    @Inject
+    private ScriptServiceManager scriptServiceManager;
+
     private XWikiPluginLifecycle lifecycle;
 
     @Override
@@ -82,8 +86,10 @@ public class DefaultCrashManager implements CrashManager
             componentReferences.referenceResolver = this.defaultReferenceResolver;
             componentReferences.referenceSerializer = this.referenceSerializer;
             componentReferences.stubContextProvider = this.stubContextProvider;
+            componentReferences.scriptServiceManager = this.scriptServiceManager;
 
-            this.lifecycle = new XWikiPluginLifecycle(Thread.currentThread().getContextClassLoader(), componentReferences);
+            this.lifecycle =
+                new XWikiPluginLifecycle(Thread.currentThread().getContextClassLoader(), componentReferences);
             this.lifecycle.start();
         }
     }

@@ -21,8 +21,10 @@ package org.xwiki.contrib.crash.internal;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginLifeCycle;
@@ -31,6 +33,9 @@ import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.xpn.xwiki.XWikiContext;
+import com.xpn.xwiki.api.XWiki;
 
 public class XWikiPluginLifecycle extends PluginLifeCycle
 {
@@ -75,8 +80,15 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
         // The service loader discovery
         ServiceLoaderDiscovery discovery = new ServiceLoaderDiscovery(this.loader);
 
+        // Prepare XWiki bindings so that they can be used inside CRaSH commands
+        Map<String, Object> attributes = new HashMap<String, Object>();
+        XWikiContext xwikiContext = getXWikiContext();
+        attributes.put("xwiki", new XWiki(xwikiContext.getWiki(), xwikiContext));
+        attributes.put("services", this.componentReferences.scriptServiceManager);
+
         PluginContext pluginContext =
-            new PluginContext(discovery, Collections.EMPTY_MAP, this.cmdFS, this.confFS, this.loader);
+            new PluginContext(new XWikiThreadPoolExecutor(this.componentReferences), new ScheduledThreadPoolExecutor(1),
+                discovery, attributes, this.cmdFS, this.confFS, this.loader);
 
         Properties props = new Properties();
 
@@ -122,5 +134,11 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
         if (this.pluginContext != null) {
             this.pluginContext.refresh();
         }
+    }
+
+    private XWikiContext getXWikiContext()
+    {
+        return (XWikiContext) this.componentReferences.execution.getContext()
+            .getProperty(XWikiContext.EXECUTIONCONTEXT_KEY);
     }
 }
