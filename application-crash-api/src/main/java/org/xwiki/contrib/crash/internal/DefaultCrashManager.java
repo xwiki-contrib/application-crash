@@ -70,25 +70,39 @@ public class DefaultCrashManager implements CrashManager
     @Override
     public void start()
     {
-        // Initialize Crash
-        XWikiComponentReferences componentReferences = new XWikiComponentReferences();
-        componentReferences.configuration = this.configuration;
-        componentReferences.defaultEntityReferenceValueProvider = this.defaultEntityReferenceValueProvider;
-        componentReferences.execution = this.execution;
-        componentReferences.executionContextManager = this.executionContextManager;
-        componentReferences.queryManager = this.queryManager;
-        componentReferences.referenceResolver = this.defaultReferenceResolver;
-        componentReferences.referenceSerializer = this.referenceSerializer;
-        componentReferences.stubContextProvider = this.stubContextProvider;
+        // Protects against several calls to start()
+        if (this.lifecycle == null) {
+            // Initialize Crash
+            XWikiComponentReferences componentReferences = new XWikiComponentReferences();
+            componentReferences.configuration = this.configuration;
+            componentReferences.defaultEntityReferenceValueProvider = this.defaultEntityReferenceValueProvider;
+            componentReferences.execution = this.execution;
+            componentReferences.executionContextManager = this.executionContextManager;
+            componentReferences.queryManager = this.queryManager;
+            componentReferences.referenceResolver = this.defaultReferenceResolver;
+            componentReferences.referenceSerializer = this.referenceSerializer;
+            componentReferences.stubContextProvider = this.stubContextProvider;
 
-        this.lifecycle =
-            new XWikiPluginLifecycle(Thread.currentThread().getContextClassLoader(), componentReferences);
-        this.lifecycle.start();
+            this.lifecycle = new XWikiPluginLifecycle(Thread.currentThread().getContextClassLoader(), componentReferences);
+            this.lifecycle.start();
+        }
+    }
+
+    @Override
+    public void refresh()
+    {
+        if (this.lifecycle != null) {
+            this.lifecycle.refresh();
+        }
     }
 
     @Override
     public void stop()
     {
-        this.lifecycle.stop();
+        // Protects against several calls to stop()
+        if (this.lifecycle != null) {
+            this.lifecycle.stop();
+            this.lifecycle = null;
+        }
     }
 }

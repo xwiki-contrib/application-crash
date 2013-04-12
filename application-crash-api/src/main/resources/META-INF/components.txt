@@ -1,3 +1,4 @@
 org.xwiki.contrib.crash.internal.DefaultCrashConfiguration
 org.xwiki.contrib.crash.internal.DefaultCrashManager
 org.xwiki.contrib.crash.internal.CrashScriptService
+org.xwiki.contrib.crash.internal.CrashEventListener

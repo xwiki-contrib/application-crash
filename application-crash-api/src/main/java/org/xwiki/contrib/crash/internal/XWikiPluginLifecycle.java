@@ -20,11 +20,9 @@
 package org.xwiki.contrib.crash.internal;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Properties;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginLifeCycle;
@@ -33,7 +31,6 @@ import org.crsh.vfs.FS;
 import org.crsh.vfs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xwiki.model.EntityType;
 
 public class XWikiPluginLifecycle extends PluginLifeCycle
 {
@@ -56,6 +53,8 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
 
     private XWikiComponentReferences componentReferences;
 
+    private PluginContext pluginContext;
+
     public XWikiPluginLifecycle(ClassLoader baseLoader, XWikiComponentReferences componentReferences)
     {
         this.loader = baseLoader;
@@ -74,31 +73,17 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
     private void startInternal() throws URISyntaxException, IOException
     {
         // The service loader discovery
-        ServiceLoaderDiscovery discovery = new ServiceLoaderDiscovery(loader);
+        ServiceLoaderDiscovery discovery = new ServiceLoaderDiscovery(this.loader);
 
-        PluginContext context = new PluginContext(
-            discovery,
-            Collections.EMPTY_MAP,
-            cmdFS,
-            confFS,
-            loader);
-
-        // HACK
-        /*
-        try {
-            Field executorField = PluginContext.class.getDeclaredField("scanner");
-            executorField.setAccessible(true);
-            executorField.set(context,
-                new ScheduledThreadPoolExecutor(1,
-                    new XWikiContextualizedThreadFactory(this.componentReferences.execution,
-                        this.componentReferences.executionContextManager, this.componentReferences.stubContextProvider,
-                        this.componentReferences.defaultEntityReferenceValueProvider.getDefaultValue(
-                            EntityType.WIKI))));
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to hack Crash!", e);
-        }*/
+        PluginContext pluginContext =
+            new PluginContext(discovery, Collections.EMPTY_MAP, this.cmdFS, this.confFS, this.loader);
 
         Properties props = new Properties();
+
+        // Ensure that CRaSH doesn't automatically update its list of commands. We want to do that manually whenever a
+        // wiki page is modified, see CrashEventListener.
+        props.setProperty("crash.vfs.refresh_period", "0");
+
         props.setProperty("crash.ssh.port", "" + this.componentReferences.configuration.getSSHPort());
 
         // TODO: Plug onto XWiki's auth
@@ -125,8 +110,17 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
         XWikiFSDriver driver = new XWikiFSDriver(this.componentReferences);
         this.cmdFS.mount(driver);
 
-        context.refresh();
+        this.pluginContext = pluginContext;
 
-        start(context);
+        pluginContext.refresh();
+
+        start(pluginContext);
+    }
+
+    public void refresh()
+    {
+        if (this.pluginContext != null) {
+            this.pluginContext.refresh();
+        }
     }
 }

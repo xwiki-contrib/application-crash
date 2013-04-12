@@ -19,21 +19,40 @@
  */
 package org.xwiki.contrib.crash.internal;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.xwiki.bridge.event.DocumentCreatedEvent;
+import org.xwiki.bridge.event.DocumentDeletedEvent;
+import org.xwiki.bridge.event.DocumentUpdatedEvent;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.contrib.crash.CrashManager;
+import org.xwiki.model.EntityType;
+import org.xwiki.model.reference.EntityReference;
 import org.xwiki.observation.EventListener;
 import org.xwiki.observation.event.Event;
+
+import com.xpn.xwiki.doc.XWikiDocument;
+import com.xpn.xwiki.objects.BaseObject;
 
 @Component
 @Named("crash")
 @Singleton
 public class CrashEventListener implements EventListener
 {
+    @Inject
+    private CrashManager crashManager;
+
+    /**
+     * Constant for representing Crash.CrashCommandClass xwiki class which is the CRaSH Command Class.
+     */
+    EntityReference CRASH_COMMAND_CLASS = new EntityReference("CrashCommandClass", EntityType.DOCUMENT,
+        new EntityReference("Crash", EntityType.SPACE));
+
     @Override
     public String getName()
     {
@@ -43,11 +62,19 @@ public class CrashEventListener implements EventListener
     @Override
     public List<Event> getEvents()
     {
-        return Collections.EMPTY_LIST;
+        return Arrays.<Event>asList(new DocumentCreatedEvent(), new DocumentUpdatedEvent(), new DocumentDeletedEvent());
     }
 
     @Override
     public void onEvent(Event event, Object source, Object data)
     {
+        if (source instanceof XWikiDocument) {
+            XWikiDocument document = (XWikiDocument) source;
+            BaseObject configurationObject = document.getXObject(CRASH_COMMAND_CLASS);
+            if (configurationObject != null) {
+                // A Crash Command has been modified/created/deleted, tell CRaSH to refresh its command list
+                this.crashManager.refresh();
+            }
+        }
     }
 }

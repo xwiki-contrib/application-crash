@@ -27,4 +27,9 @@ public interface CrashManager
     void start();
 
     void stop();
+
+    /**
+     * Reload XWiki CRaSH commands.
+     */
+    void refresh();
 }
