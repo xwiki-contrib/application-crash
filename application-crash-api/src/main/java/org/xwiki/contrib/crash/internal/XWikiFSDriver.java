@@ -64,7 +64,17 @@ public class XWikiFSDriver extends AbstractFSDriver<DocumentReference>
         if (handle.equals(ROOT)) {
             result = "Root";
         } else {
-            result = handle.toString() + ".groovy";
+            initializeXWikiContext();
+            try {
+                Query query = this.componentReferences.queryManager.createQuery(
+                    "select distinct crashCommand.name from Document doc, doc.object(Crash.CrashCommandClass) as crashCommand where doc.fullName = :docName",
+                    Query.XWQL);
+                query.bindValue("docName", this.componentReferences.referenceSerializer.serialize(handle));
+                List<String> names = query.execute();
+                result = names.get(0) + ".groovy";
+            } catch (QueryException e) {
+                throw new IOException(String.format("Failed to get Crash command for [%s]", handle), e);
+            }
         }
 
         return result;
