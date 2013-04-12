@@ -62,12 +62,12 @@
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.core</artifactId>
-      <version>1.2.0-cr11</version>
+      <version>1.2.1</version>
     </dependency>
     <dependency>
       <groupId>org.crsh</groupId>
       <artifactId>crsh.shell.ssh</artifactId>
-      <version>1.2.0-cr11</version>
+      <version>1.2.1</version>
       <exclusions>
         <!-- We want to use SLF4J -->
         <exclusion>
