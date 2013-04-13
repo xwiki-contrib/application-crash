@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xwikidoc>
+  <web>Crash</web>
+  <name>XWikiCommand</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent>Crash.WebHome</parent>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1365840036000</creationDate>
+  <date>1365840586000</date>
+  <contentUpdateDate>1365840036000</contentUpdateDate>
+  <version>1.1</version>
+  <title/>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>false</hidden>
+  <object>
+    <class>
+      <name>Crash.CrashCommandClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <command>
+        <customDisplay/>
+        <disabled>0</disabled>
+        <editor>---</editor>
+        <name>command</name>
+        <number>1</number>
+        <picker>0</picker>
+        <prettyName>command</prettyName>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </command>
+      <name>
+        <customDisplay/>
+        <disabled>0</disabled>
+        <name>name</name>
+        <number>2</number>
+        <picker>0</picker>
+        <prettyName>name</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </name>
+    </class>
+    <name>Crash.XWikiCommand</name>
+    <number>0</number>
+    <className>Crash.CrashCommandClass</className>
+    <guid>77e61b41-dce8-47a6-9078-e313e52807e9</guid>
+    <property>
+      <command>@Usage("XWiki commands")
+class xwiki {
+
+  @Usage("execute an XWQL query")
+  @Command
+  public String xwql(
+      @Usage("The XWQL query")
+      @Argument
+      String query)
+  {
+    context.attributes.services.query.xwql(query).setLimit(100).execute().each() {
+      out.println("- ${it}")
+    }
+  }
+
+}</command>
+    </property>
+    <property>
+      <name>xwiki</name>
+    </property>
+  </object>
+  <content/>
+</xwikidoc>
