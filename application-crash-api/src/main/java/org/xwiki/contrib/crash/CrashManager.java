@@ -20,8 +20,10 @@
 package org.xwiki.contrib.crash;
 
 import org.xwiki.component.annotation.Role;
+import org.xwiki.stability.Unstable;
 
 @Role
+@Unstable
 public interface CrashManager
 {
     void start();
