@@ -65,5 +65,6 @@ crash.admin.startSuccess=CRaSH has been started!
 crash.admin.startFailure=CRaSH has failed to start!
 crash.admin.stopSuccess=CRaSH has been stopped!
 crash.admin.stopFailure=CRaSH has failed to stop!
+crash.admin.failure=Starting or stopping CRaSH can only be done from the main wiki and requires Admin Rights!
 </content>
 </xwikidoc>

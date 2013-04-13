@@ -23,10 +23,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.xwiki.bridge.DocumentAccessBridge;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.context.Execution;
 import org.xwiki.contrib.crash.CrashManager;
 import org.xwiki.script.service.ScriptService;
+
+import com.xpn.xwiki.XWikiContext;
 
 @Component
 @Named("crash")
@@ -37,19 +39,35 @@ public class CrashScriptService implements ScriptService
     private CrashManager crashManager;
 
     @Inject
-    private DocumentAccessBridge bridge;
+    private Execution execution;
 
     public void start()
     {
-        if (this.bridge.hasProgrammingRights()) {
+        if (hasPermissions()) {
             this.crashManager.start();
         }
     }
 
     public void stop()
     {
-        if (this.bridge.hasProgrammingRights()) {
+        if (hasPermissions()) {
             this.crashManager.stop();
         }
+    }
+
+    public boolean isStarted()
+    {
+        return this.crashManager.isStarted();
+    }
+
+    private boolean hasPermissions()
+    {
+        XWikiContext xwikiContext = getXWikiContext();
+        return xwikiContext.isMainWiki() && xwikiContext.getWiki().getRightService().hasAdminRights(xwikiContext);
+    }
+
+    private XWikiContext getXWikiContext()
+    {
+        return (XWikiContext) this.execution.getContext().getProperty(XWikiContext.EXECUTIONCONTEXT_KEY);
     }
 }

@@ -171,11 +171,11 @@
     </property>
   </object>
   <content>{{velocity}}
-#if($hasAdmin)
+#if($hasAdmin &amp;&amp; $xcontext.isMainWiki())
   #if ($request.action == 'start')
     $services.crash.start()
     #if ($services.crash.isStarted())
-      {{info}}$services.localization.render('crash.admin.startSuccess'){{/info}}
+      {{success}}$services.localization.render('crash.admin.startSuccess'){{/success}}
     #else
       {{error}}$services.localization.render('crash.admin.startFailure'){{/error}}
     #end
@@ -184,7 +184,7 @@
     #if ($services.crash.isStarted())
       {{error}}$services.localization.render('crash.admin.stopFailure'){{/error}}
     #else
-      {{info}}$services.localization.render('crash.admin.stopSuccess'){{/info}}
+      {{success}}$services.localization.render('crash.admin.stopSuccess'){{/success}}
     #end
   #end
 
@@ -206,7 +206,7 @@
     &lt;/form&gt;
   {{/html}}
 #else## !$hasAdmin
-  {{error}}$services.localization.render('needadminrights').{{/error}}
+  {{error}}$services.localization.render('crash.admin.failure').{{/error}}
 #end
 {{/velocity}}</content>
 </xwikidoc>
