@@ -11,11 +11,11 @@
   <author>xwiki:XWiki.Admin</author>
   <customClass/>
   <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
-  <creationDate>1365840036000</creationDate>
-  <date>1365840586000</date>
-  <contentUpdateDate>1365840036000</contentUpdateDate>
+  <creationDate>1365840743000</creationDate>
+  <date>1365840980000</date>
+  <contentUpdateDate>1365840960000</contentUpdateDate>
   <version>1.1</version>
-  <title/>
+  <title>XWiki Command</title>
   <defaultTemplate/>
   <validationScript/>
   <comment/>
@@ -79,6 +79,7 @@ class xwiki {
     context.attributes.services.query.xwql(query).setLimit(100).execute().each() {
       out.println("- ${it}")
     }
+    out.println("")
   }
 
 }</command>
@@ -87,5 +88,16 @@ class xwiki {
       <name>xwiki</name>
     </property>
   </object>
-  <content/>
+  <content>Example usage:
+
+* List all users registered in the wiki:(((
+{{box}}
+xwiki xwql "from doc.object(XWiki.XWikiUsers) as user"
+{{/box}}
+)))
+* List all pages containing CRaSH commands:(((
+{{box}}
+xwiki xwql "from doc.object(Crash.CrashCommandClass) as user"
+{{/box}}
+)))</content>
 </xwikidoc>
