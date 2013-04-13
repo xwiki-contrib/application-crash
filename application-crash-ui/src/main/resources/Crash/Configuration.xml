@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xwikidoc>
+  <web>Crash</web>
+  <name>Configuration</name>
+  <language/>
+  <defaultLanguage/>
+  <translation>0</translation>
+  <parent/>
+  <creator>xwiki:XWiki.Admin</creator>
+  <author>xwiki:XWiki.Admin</author>
+  <customClass/>
+  <contentAuthor>xwiki:XWiki.Admin</contentAuthor>
+  <creationDate>1365784828000</creationDate>
+  <date>1365836893000</date>
+  <contentUpdateDate>1365836893000</contentUpdateDate>
+  <version>1.1</version>
+  <title/>
+  <defaultTemplate/>
+  <validationScript/>
+  <comment/>
+  <minorEdit>false</minorEdit>
+  <syntaxId>xwiki/2.1</syntaxId>
+  <hidden>true</hidden>
+  <object>
+    <class>
+      <name>XWiki.ConfigurableClass</name>
+      <customClass/>
+      <customMapping/>
+      <defaultViewSheet/>
+      <defaultEditSheet/>
+      <defaultWeb/>
+      <nameField/>
+      <validationScript/>
+      <codeToExecute>
+        <disabled>0</disabled>
+        <editor>---</editor>
+        <name>codeToExecute</name>
+        <number>7</number>
+        <picker>0</picker>
+        <prettyName>codeToExecute</prettyName>
+        <rows>5</rows>
+        <size>40</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.TextAreaClass</classType>
+      </codeToExecute>
+      <configurationClass>
+        <disabled>0</disabled>
+        <name>configurationClass</name>
+        <number>3</number>
+        <picker>0</picker>
+        <prettyName>configurationClass</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </configurationClass>
+      <configureGlobally>
+        <defaultValue/>
+        <disabled>0</disabled>
+        <displayFormType>checkbox</displayFormType>
+        <displayType/>
+        <name>configureGlobally</name>
+        <number>4</number>
+        <prettyName>configureGlobally</prettyName>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.BooleanClass</classType>
+      </configureGlobally>
+      <displayInSection>
+        <disabled>0</disabled>
+        <name>displayInSection</name>
+        <number>1</number>
+        <picker>0</picker>
+        <prettyName>displayInSection</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </displayInSection>
+      <heading>
+        <disabled>0</disabled>
+        <name>heading</name>
+        <number>2</number>
+        <picker>0</picker>
+        <prettyName>heading</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </heading>
+      <iconAttachment>
+        <disabled>0</disabled>
+        <name>iconAttachment</name>
+        <number>8</number>
+        <picker>0</picker>
+        <prettyName>iconAttachment</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </iconAttachment>
+      <linkPrefix>
+        <disabled>0</disabled>
+        <name>linkPrefix</name>
+        <number>5</number>
+        <picker>0</picker>
+        <prettyName>linkPrefix</prettyName>
+        <size>30</size>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <classType>com.xpn.xwiki.objects.classes.StringClass</classType>
+      </linkPrefix>
+      <propertiesToShow>
+        <cache>0</cache>
+        <disabled>0</disabled>
+        <displayType>input</displayType>
+        <multiSelect>1</multiSelect>
+        <name>propertiesToShow</name>
+        <number>6</number>
+        <picker>0</picker>
+        <prettyName>propertiesToShow</prettyName>
+        <relationalStorage>1</relationalStorage>
+        <separator> </separator>
+        <separators> ,|</separators>
+        <size>20</size>
+        <sort>none</sort>
+        <unmodifiable>0</unmodifiable>
+        <validationMessage/>
+        <validationRegExp/>
+        <values/>
+        <classType>com.xpn.xwiki.objects.classes.StaticListClass</classType>
+      </propertiesToShow>
+    </class>
+    <name>Crash.Configuration</name>
+    <number>0</number>
+    <className>XWiki.ConfigurableClass</className>
+    <guid>7f9ebf8c-c092-461b-b0b3-e1da6ab200e4</guid>
+    <property>
+      <codeToExecute>{{include document='Crash.Configuration' /}}
+</codeToExecute>
+    </property>
+    <property>
+      <configurationClass/>
+    </property>
+    <property>
+      <configureGlobally>1</configureGlobally>
+    </property>
+    <property>
+      <displayInSection>CRaSH</displayInSection>
+    </property>
+    <property>
+      <heading/>
+    </property>
+    <property>
+      <iconAttachment/>
+    </property>
+    <property>
+      <linkPrefix/>
+    </property>
+    <property>
+      <propertiesToShow/>
+    </property>
+  </object>
+  <content>{{velocity}}
+#if($hasAdmin)
+  #if ($request.action == 'start')
+    $services.crash.start()
+    #if ($services.crash.isStarted())
+      {{info}}$services.localization.render('crash.admin.startSuccess'){{/info}}
+    #else
+      {{error}}$services.localization.render('crash.admin.startFailure'){{/error}}
+    #end
+  #elseif ($request.action == 'stop')
+    $services.crash.stop()
+    #if ($services.crash.isStarted())
+      {{error}}$services.localization.render('crash.admin.stopFailure'){{/error}}
+    #else
+      {{info}}$services.localization.render('crash.admin.stopSuccess'){{/info}}
+    #end
+  #end
+
+  {{html}}
+    $services.localization.render('crash.admin.form.description')
+    &lt;form action="$xwiki.requestURL" enctype="multipart/form-data" method="post"&gt;
+      &lt;fieldset&gt;
+        &lt;input type="hidden" name="form_token" value="$!{services.csrf.getToken()}" /&gt;
+        &lt;p&gt;
+          &lt;label for="crashStart"&gt;&lt;input id="crashStart" name="action" type="radio" value="start" #if (!$request.action || $request.action == 'start')checked="checked" #end/&gt;$services.localization.render('crash.admin.form.start')&lt;/label&gt;
+        &lt;/p&gt;
+        &lt;p&gt;
+          &lt;label for="crashStop"&gt;&lt;input id="crashStop" name="action" type="radio" value="stop" #if (!$request.action || $request.action == 'stop'))checked="checked" #end/&gt;$services.localization.render('crash.admin.form.stop')&lt;/label&gt;
+        &lt;/p&gt;
+        &lt;span class="buttonwrapper"&gt;
+          &lt;input type="submit" value="$services.localization.render('crash.admin.form.submit')" class="button"/&gt;
+        &lt;/span&gt;
+      &lt;/fieldset&gt;
+    &lt;/form&gt;
+  {{/html}}
+#else## !$hasAdmin
+  {{error}}$services.localization.render('needadminrights').{{/error}}
+#end
+{{/velocity}}</content>
+</xwikidoc>

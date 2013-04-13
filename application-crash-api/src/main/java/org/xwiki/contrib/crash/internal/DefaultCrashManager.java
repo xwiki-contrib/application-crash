@@ -75,7 +75,7 @@ public class DefaultCrashManager implements CrashManager
     public void start()
     {
         // Protects against several calls to start()
-        if (this.lifecycle == null) {
+        if (!isStarted()) {
             // Initialize Crash
             XWikiComponentReferences componentReferences = new XWikiComponentReferences();
             componentReferences.configuration = this.configuration;
@@ -97,7 +97,7 @@ public class DefaultCrashManager implements CrashManager
     @Override
     public void refresh()
     {
-        if (this.lifecycle != null) {
+        if (isStarted()) {
             this.lifecycle.refresh();
         }
     }
@@ -106,9 +106,15 @@ public class DefaultCrashManager implements CrashManager
     public void stop()
     {
         // Protects against several calls to stop()
-        if (this.lifecycle != null) {
+        if (isStarted()) {
             this.lifecycle.stop();
             this.lifecycle = null;
         }
+    }
+
+    @Override
+    public boolean isStarted()
+    {
+         return this.lifecycle != null;
     }
 }

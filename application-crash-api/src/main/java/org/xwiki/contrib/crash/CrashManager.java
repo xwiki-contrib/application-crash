@@ -32,4 +32,6 @@ public interface CrashManager
      * Reload XWiki CRaSH commands.
      */
     void refresh();
+
+    boolean isStarted();
 }
