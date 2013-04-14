@@ -67,6 +67,12 @@
     </dependency>
     <!-- Test dependencies -->
     <dependency>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>application-crash-test-pageobjects</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-platform-test</artifactId>
       <version>${platform.version}</version>

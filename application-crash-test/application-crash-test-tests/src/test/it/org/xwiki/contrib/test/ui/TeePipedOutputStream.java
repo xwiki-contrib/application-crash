@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
- *
+/*
  * See the NOTICE file distributed with this work for additional
  * information regarding copyright ownership.
  *
@@ -19,22 +16,33 @@
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- *
--->
+ */
+package org.xwiki.contrib.test.ui;
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.xwiki.contrib</groupId>
-    <artifactId>application-crash</artifactId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>application-crash-test</artifactId>
-  <name>XWiki Contrib - CRaSH Application - Test - Parent POM</name>
-  <packaging>pom</packaging>
-  <description>XWiki Contrib - CRaSH Application - Test - Parent POM</description>
-  <modules>
-    <module>application-crash-test-pageobjects</module>
-    <module>application-crash-test-tests</module>
-  </modules>
-</project>
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PipedOutputStream;
+
+public class TeePipedOutputStream extends PipedOutputStream
+{
+    private OutputStream tee;
+
+    public TeePipedOutputStream(OutputStream tee)
+    {
+        this.tee = tee;
+    }
+
+    @Override
+    public void write(int b) throws IOException
+    {
+        super.write(b);
+        tee.write(b);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException
+    {
+        super.write(b, off, len);
+        tee.write(b, off, len);
+    }
+}
