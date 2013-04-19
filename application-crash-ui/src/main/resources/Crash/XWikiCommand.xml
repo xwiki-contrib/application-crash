@@ -72,6 +72,7 @@ class xwiki {
   @Usage("execute an XWQL query")
   @Command
   public String xwql(
+      @Required
       @Usage("The XWQL query")
       @Argument
       String query)
