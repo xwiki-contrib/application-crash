@@ -32,14 +32,14 @@
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>application-crash</artifactId>
   <name>XWiki Contrib - CRaSH Application - Parent POM</name>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Integrates CRaSH in XWiki</description>
   <scm>
     <connection>scm:git:git://github.com/xwiki-contrib/application-crash.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/application-crash.git</developerConnection>
     <url>https://github.com/xwiki-contrib/application-crash</url>
-    <tag>application-crash-1.0</tag>
+    <tag>HEAD</tag>
   </scm>
   <properties>
     <platform.version>${commons.version}</platform.version>
