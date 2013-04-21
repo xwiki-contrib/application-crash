@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xwiki.bridge.event.DocumentCreatedEvent;
 import org.xwiki.bridge.event.DocumentDeletedEvent;
 import org.xwiki.bridge.event.DocumentUpdatedEvent;
@@ -72,8 +73,12 @@ public class CrashEventListener implements EventListener
             XWikiDocument document = (XWikiDocument) source;
             BaseObject configurationObject = document.getXObject(CRASH_COMMAND_CLASS);
             if (configurationObject != null) {
-                // A Crash Command has been modified/created/deleted, tell CRaSH to refresh its command list
-                this.crashManager.refresh();
+                // A Crash Command has been modified/created/deleted, tell CRaSH to refresh its command list, but only
+                // if the command name is not empty (we do this because when we add an object, it's added immediately
+                // without letting the user the ability to add data!).
+                if (!StringUtils.isEmpty(configurationObject.getStringValue("name"))) {
+                    this.crashManager.refresh();
+                }
             }
         }
     }
