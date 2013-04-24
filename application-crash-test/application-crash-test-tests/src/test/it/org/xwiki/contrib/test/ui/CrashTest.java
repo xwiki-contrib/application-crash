@@ -66,7 +66,7 @@ public class CrashTest extends AbstractAdminAuthenticatedTest
             pipedIn.flush();
 
             // Execute the "xwiki" command to get all users defined in the wiki
-            pipedIn.write("xwiki xwql \"from doc.object(XWiki.XWikiUsers) as user\"\n".getBytes());
+            pipedIn.write("xwiki xwql from doc.object(XWiki.XWikiUsers) as user\n".getBytes());
             pipedIn.flush();
 
             // Close the ssh client
