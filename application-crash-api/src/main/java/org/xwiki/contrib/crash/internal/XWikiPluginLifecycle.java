@@ -24,7 +24,10 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginLifeCycle;
@@ -86,8 +89,9 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
         attributes.put("xwiki", new XWiki(xwikiContext.getWiki(), xwikiContext));
         attributes.put("services", this.componentReferences.scriptServiceManager);
 
+        ExecutorService executor = Executors.newFixedThreadPool(20, new XWikiThreadFactory(componentReferences));
         PluginContext pluginContext =
-            new PluginContext(new XWikiThreadPoolExecutor(this.componentReferences), new ScheduledThreadPoolExecutor(1),
+            new PluginContext(executor, new ScheduledThreadPoolExecutor(1),
                 discovery, attributes, this.cmdFS, this.confFS, this.loader);
 
         Properties props = new Properties();
