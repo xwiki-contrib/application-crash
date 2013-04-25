@@ -84,6 +84,7 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
         Map<String, Object> attributes = new HashMap<String, Object>();
         XWikiContext xwikiContext = getXWikiContext();
         attributes.put("xwiki", new XWiki(xwikiContext.getWiki(), xwikiContext));
+        attributes.put("xWikiContext", xwikiContext);
         attributes.put("services", this.componentReferences.scriptServiceManager);
 
         PluginContext pluginContext =
@@ -98,16 +99,7 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
 
         props.setProperty("crash.ssh.port", "" + this.componentReferences.configuration.getSSHPort());
 
-        // TODO: Plug onto XWiki's auth
-        props.setProperty("crash.auth", "simple");
-        String username = this.componentReferences.configuration.getSSHUserName();
-        if (username != null) {
-            props.setProperty("crash.auth.simple.username", username);
-        }
-        String password = this.componentReferences.configuration.getSSHPassword();
-        if (password != null) {
-            props.setProperty("crash.auth.simple.password", password);
-        }
+        props.setProperty("crash.auth", "xWikiAuthentication");
 
         // Register our configuration
         setConfig(props);

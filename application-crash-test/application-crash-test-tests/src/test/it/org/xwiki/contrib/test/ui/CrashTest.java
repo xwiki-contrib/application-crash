@@ -47,7 +47,7 @@ public class CrashTest extends AbstractAdminAuthenticatedTest
         SshClient client = SshClient.setUpDefaultClient();
         client.start();
         ClientSession session = client.connect("localhost", 2000).await().getSession();
-        session.authPassword("admin", "admin").await().isSuccess();
+        session.authPassword("Admin", "admin").await().isSuccess();
 
         ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_SHELL);
 
