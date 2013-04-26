@@ -23,13 +23,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * A thread factory that associates created thread with the xwiki execution context thread local.
+ * A thread factory that ensures that created threads have the XWiki Execution Context properly initialized.
  *
- * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
+ * @version $Id$
+ * @since 1.1
  */
 public class XWikiThreadFactory implements ThreadFactory
 {
-
     final ThreadFactory factory = Executors.defaultThreadFactory();
     final XWikiComponentReferences componentReferences;
     final XWikiContextInitializer initializer = new XWikiContextInitializer();
@@ -40,7 +40,7 @@ public class XWikiThreadFactory implements ThreadFactory
     }
 
     @Override
-    public Thread newThread(final Runnable r)
+    public Thread newThread(final Runnable runnable)
     {
         return factory.newThread(new Runnable()
         {
@@ -48,7 +48,7 @@ public class XWikiThreadFactory implements ThreadFactory
             public void run()
             {
                 initializer.initalize(componentReferences);
-                r.run();
+                runnable.run();
             }
         });
     }
