@@ -27,7 +27,6 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
 
 import org.crsh.plugin.PluginContext;
 import org.crsh.plugin.PluginLifeCycle;
@@ -87,7 +86,6 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
         Map<String, Object> attributes = new HashMap<String, Object>();
         XWikiContext xwikiContext = getXWikiContext();
         attributes.put("xwiki", new XWiki(xwikiContext.getWiki(), xwikiContext));
-        attributes.put("xWikiContext", xwikiContext);
         attributes.put("services", this.componentReferences.scriptServiceManager);
 
         ExecutorService executor = Executors.newFixedThreadPool(20, new XWikiThreadFactory(componentReferences));
@@ -103,7 +101,7 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
 
         props.setProperty("crash.ssh.port", "" + this.componentReferences.configuration.getSSHPort());
 
-        props.setProperty("crash.auth", "xWikiAuthentication");
+        props.setProperty("crash.auth", "XWikiAuthentication");
 
         // Register our configuration
         setConfig(props);

@@ -46,10 +46,6 @@
       com.xpn.xwiki.plugin.skinx.LinkExtensionPlugin,\
       com.xpn.xwiki.plugin.packaging.PackagePlugin
     </xwikiCfgPlugins>
-    <xwikiPropertiesAdditionalProperties>
-      crash.auth.simple.username=admin
-      crash.auth.simple.password=admin
-    </xwikiPropertiesAdditionalProperties>
   </properties>
   <dependencies>
     <dependency>

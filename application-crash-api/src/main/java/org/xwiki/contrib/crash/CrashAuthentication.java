@@ -20,17 +20,9 @@
 package org.xwiki.contrib.crash;
 
 import org.xwiki.component.annotation.Role;
-import org.xwiki.stability.Unstable;
 
 @Role
-@Unstable
-public interface CrashConfiguration
+public interface CrashAuthentication
 {
-    int getSSHPort();
-
-    String getSSHUserName();
-
-    String getSSHPassword();
-
-    String getAuthentication();
+    boolean authenticate(String username, String password);
 }

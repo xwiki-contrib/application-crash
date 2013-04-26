@@ -17,39 +17,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.contrib.crash.internal;
+package org.xwiki.contrib.crash.internal.authentication;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xwiki.component.annotation.Component;
-import org.xwiki.configuration.ConfigurationSource;
+import org.xwiki.contrib.crash.CrashAuthentication;
 import org.xwiki.contrib.crash.CrashConfiguration;
 
 @Component
-public class DefaultCrashConfiguration implements CrashConfiguration
+@Named("simple")
+@Singleton
+public class SimpleCrashAuthentication implements CrashAuthentication
 {
-    private static final String PREFIX = "crash.";
-
     @Inject
-    public ConfigurationSource configurationSource;
+    private CrashConfiguration configuration;
 
-    @Override public int getSSHPort()
+    @Override
+    public boolean authenticate(String username, String password)
     {
-        return this.configurationSource.getProperty(PREFIX + "ssh.port", 2000);
-    }
+        boolean isAuthenticated = false;
 
-    @Override public String getSSHUserName()
-    {
-        return this.configurationSource.getProperty(PREFIX + "ssh.username");
-    }
+        String configuredUser = this.configuration.getSSHUserName();
+        String configuredPassword = this.configuration.getSSHPassword();
 
-    @Override public String getSSHPassword()
-    {
-        return this.configurationSource.getProperty(PREFIX + "ssh.password");
-    }
+        if (StringUtils.equals(configuredUser, username) && StringUtils.equals(configuredPassword, password)) {
+            isAuthenticated = true;
+        }
 
-    @Override public String getAuthentication()
-    {
-        return this.configurationSource.getProperty(PREFIX + "authentication", "all");
+        return isAuthenticated;
     }
 }

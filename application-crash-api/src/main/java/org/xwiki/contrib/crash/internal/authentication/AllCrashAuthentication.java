@@ -17,39 +17,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.contrib.crash.internal;
+package org.xwiki.contrib.crash.internal.authentication;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
-import org.xwiki.configuration.ConfigurationSource;
-import org.xwiki.contrib.crash.CrashConfiguration;
+import org.xwiki.contrib.crash.CrashAuthentication;
 
 @Component
-public class DefaultCrashConfiguration implements CrashConfiguration
+@Named("all")
+@Singleton
+public class AllCrashAuthentication implements CrashAuthentication
 {
-    private static final String PREFIX = "crash.";
+    @Inject
+    @Named("xwiki")
+    private CrashAuthentication xwikiCrashAuthentication;
 
     @Inject
-    public ConfigurationSource configurationSource;
+    @Named("simple")
+    private CrashAuthentication simpleCrashAuthentication;
 
-    @Override public int getSSHPort()
+    @Override
+    public boolean authenticate(String username, String password)
     {
-        return this.configurationSource.getProperty(PREFIX + "ssh.port", 2000);
-    }
-
-    @Override public String getSSHUserName()
-    {
-        return this.configurationSource.getProperty(PREFIX + "ssh.username");
-    }
-
-    @Override public String getSSHPassword()
-    {
-        return this.configurationSource.getProperty(PREFIX + "ssh.password");
-    }
-
-    @Override public String getAuthentication()
-    {
-        return this.configurationSource.getProperty(PREFIX + "authentication", "all");
+        boolean isAuthenticated = this.simpleCrashAuthentication.authenticate(username, password);
+        if (!isAuthenticated) {
+            isAuthenticated = this.xwikiCrashAuthentication.authenticate(username, password);
+        }
+        return isAuthenticated;
     }
 }
