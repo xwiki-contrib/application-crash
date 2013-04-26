@@ -19,31 +19,37 @@
  */
 package org.xwiki.contrib.crash.internal;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
- * Extend {@link ThreadPoolExecutor} in order to be able to provide a special {@link Callable} that will set up the
- * XWiki Context prior to delegating to the original Callable called by CRaSH which is used to execute a CRaSH command.
+ * A thread factory that associates created thread with the xwiki execution context thread local.
  *
- * @version $Id$
+ * @author <a href="mailto:julien.viet@exoplatform.com">Julien Viet</a>
  */
-public class XWikiThreadPoolExecutor extends ThreadPoolExecutor
+public class XWikiThreadFactory implements ThreadFactory
 {
-    private XWikiComponentReferences componentReferences;
 
-    public XWikiThreadPoolExecutor(XWikiComponentReferences componentReferences)
+    final ThreadFactory factory = Executors.defaultThreadFactory();
+    final XWikiComponentReferences componentReferences;
+    final XWikiContextInitializer initializer = new XWikiContextInitializer();
+
+    public XWikiThreadFactory(XWikiComponentReferences componentReferences)
     {
-        super(2, 2, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         this.componentReferences = componentReferences;
     }
 
     @Override
-    protected <T> RunnableFuture<T> newTaskFor(Callable<T> tCallable)
+    public Thread newThread(final Runnable r)
     {
-        return super.newTaskFor(new XWikiCallable<T>(tCallable, componentReferences));
+        return factory.newThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                initializer.initalize(componentReferences);
+                r.run();
+            }
+        });
     }
 }
