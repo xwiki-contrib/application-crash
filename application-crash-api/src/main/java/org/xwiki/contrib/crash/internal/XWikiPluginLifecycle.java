@@ -87,7 +87,7 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
         XWikiContext xwikiContext = getXWikiContext();
         attributes.put("xwiki", new XWiki(xwikiContext.getWiki(), xwikiContext));
         attributes.put("services", this.componentReferences.scriptServiceManager);
-        attributes.put("componentManagher", this.componentReferences.componentManager);
+        attributes.put("componentManager", this.componentReferences.componentManager);
 
         ExecutorService executor = Executors.newFixedThreadPool(20, new XWikiThreadFactory(componentReferences));
         PluginContext pluginContext =
