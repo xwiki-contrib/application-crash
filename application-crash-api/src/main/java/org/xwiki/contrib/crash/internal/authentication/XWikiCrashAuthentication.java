@@ -21,12 +21,11 @@ package org.xwiki.contrib.crash.internal.authentication;
 
 import java.security.Principal;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.crsh.plugin.PluginContext;
 import org.xwiki.component.annotation.Component;
-import org.xwiki.context.Execution;
 import org.xwiki.contrib.crash.CrashAuthentication;
 
 import com.xpn.xwiki.XWikiContext;
@@ -37,15 +36,11 @@ import com.xpn.xwiki.XWikiException;
 @Singleton
 public class XWikiCrashAuthentication implements CrashAuthentication
 {
-    @Inject
-    private Execution execution;
-
     @Override
-    public boolean authenticate(String username, String password)
+    public boolean authenticate(String username, String password, PluginContext pluginContext)
     {
         boolean isAuthenticated = false;
-        XWikiContext xwikiContext =
-            (XWikiContext) this.execution.getContext().getProperty(XWikiContext.EXECUTIONCONTEXT_KEY);
+        XWikiContext xwikiContext = (XWikiContext) pluginContext.getAttributes().get("xcontext");
         try {
             Principal principal =
                 xwikiContext.getWiki().getAuthService().authenticate(username, password, xwikiContext);

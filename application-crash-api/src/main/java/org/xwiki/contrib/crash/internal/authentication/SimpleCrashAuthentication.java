@@ -24,6 +24,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
+import org.crsh.plugin.PluginContext;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.contrib.crash.CrashAuthentication;
 import org.xwiki.contrib.crash.CrashConfiguration;
@@ -37,7 +38,7 @@ public class SimpleCrashAuthentication implements CrashAuthentication
     private CrashConfiguration configuration;
 
     @Override
-    public boolean authenticate(String username, String password)
+    public boolean authenticate(String username, String password, PluginContext pluginContext)
     {
         boolean isAuthenticated = false;
 

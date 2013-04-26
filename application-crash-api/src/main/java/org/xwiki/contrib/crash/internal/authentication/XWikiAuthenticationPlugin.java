@@ -23,7 +23,7 @@ public class XWikiAuthenticationPlugin extends CRaSHPlugin<AuthenticationPlugin>
             CrashConfiguration configuration = componentManager.getInstance(CrashConfiguration.class);
             CrashAuthentication authentication =
                 componentManager.getInstance(CrashAuthentication.class, configuration.getAuthentication());
-            isAuthenticated = authentication.authenticate(username, password);
+            isAuthenticated = authentication.authenticate(username, password, getContext());
         } catch (Exception e) {
             // Nothing to do, isAuthenticated is false by default
         }

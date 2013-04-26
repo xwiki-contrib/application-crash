@@ -19,10 +19,11 @@
  */
 package org.xwiki.contrib.crash;
 
+import org.crsh.plugin.PluginContext;
 import org.xwiki.component.annotation.Role;
 
 @Role
 public interface CrashAuthentication
 {
-    boolean authenticate(String username, String password);
+    boolean authenticate(String username, String password, PluginContext pluginContext);
 }

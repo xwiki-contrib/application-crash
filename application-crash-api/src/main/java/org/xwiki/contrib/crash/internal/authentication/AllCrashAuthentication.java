@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.crsh.plugin.PluginContext;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.contrib.crash.CrashAuthentication;
 
@@ -39,12 +40,11 @@ public class AllCrashAuthentication implements CrashAuthentication
     @Named("simple")
     private CrashAuthentication simpleCrashAuthentication;
 
-    @Override
-    public boolean authenticate(String username, String password)
+    @Override public boolean authenticate(String username, String password, PluginContext pluginContext)
     {
-        boolean isAuthenticated = this.simpleCrashAuthentication.authenticate(username, password);
+        boolean isAuthenticated = this.simpleCrashAuthentication.authenticate(username, password, pluginContext);
         if (!isAuthenticated) {
-            isAuthenticated = this.xwikiCrashAuthentication.authenticate(username, password);
+            isAuthenticated = this.xwikiCrashAuthentication.authenticate(username, password, pluginContext);
         }
         return isAuthenticated;
     }
