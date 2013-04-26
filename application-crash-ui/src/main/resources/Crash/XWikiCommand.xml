@@ -66,23 +66,47 @@
     <className>Crash.CrashCommandClass</className>
     <guid>77e61b41-dce8-47a6-9078-e313e52807e9</guid>
     <property>
-      <command>@Usage("XWiki commands")
+      <command><![CDATA[@Usage("XWiki commands")
 class xwiki {
 
-  @Usage("execute an XWQL query")
   @Command
-  public String xwql(
-      @Usage("The XWQL query")
-      @Argument
-      String query)
+  @Usage("execute an XWQL query")
+  @Man("Executes an XWQL query")
+  public void xwql(
+      @Option(names=["o","offset"])
+      @Usage("the result offset")
+      @Man("The offset of the first result to display")
+      Integer offset,
+      @Option(names=["l","limit"])
+      @Usage("the result limit")
+      @Man("The number of result displayed, by default this value is equals to 100")
+      Integer limit,
+      @Argument(unquote = false)
+      @Usage("the XWQL query")
+      @Man("The XWQL query, as is")
+      List<String> query)
   {
-    context.attributes.services.query.xwql(query).setLimit(100).execute().each() {
-      out.println("- ${it}")
-    }
-    out.println("")
-  }
+    offset = offset ?: 0
+    if (offset < 0)
+      throw new ScriptException("Offset cannot be a negative value: $offset")
 
-}</command>
+    limit = limit ?: 100
+    if (limit < 0)
+      throw new ScriptException("Limit cannot be a negative value: $limit")
+
+    def statement = ""
+    query.each { statement += " " + it }
+
+    def time = System.currentTimeMillis()
+    def result = context.attributes.services.query.xwql(statement).setOffset(offset).setLimit(limit).execute()
+    time = System.currentTimeMillis() - time
+
+    out << "Found ${result.size()} result in ${time} milliseconds:\n"
+    result.each() {
+      out << "- ${it}\n"
+    }
+  }
+}]]></command>
     </property>
     <property>
       <name>xwiki</name>
@@ -92,12 +116,12 @@ class xwiki {
 
 * List all users registered in the wiki:(((
 {{box}}
-xwiki xwql "from doc.object(XWiki.XWikiUsers) as user"
+xwiki xwql from doc.object(XWiki.XWikiUsers) as user
 {{/box}}
 )))
 * List all pages containing CRaSH commands:(((
 {{box}}
-xwiki xwql "from doc.object(Crash.CrashCommandClass) as user"
+xwiki xwql from doc.object(Crash.CrashCommandClass) as user
 {{/box}}
 )))</content>
 </xwikidoc>
