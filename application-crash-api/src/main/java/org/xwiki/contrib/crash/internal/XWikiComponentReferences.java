@@ -19,6 +19,7 @@
  */
 package org.xwiki.contrib.crash.internal;
 
+import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContextManager;
 import org.xwiki.contrib.crash.CrashConfiguration;
@@ -49,4 +50,6 @@ public class XWikiComponentReferences
     public EntityReferenceValueProvider defaultEntityReferenceValueProvider;
 
     public ScriptServiceManager scriptServiceManager;
+
+    public ComponentManager componentManager;
 }

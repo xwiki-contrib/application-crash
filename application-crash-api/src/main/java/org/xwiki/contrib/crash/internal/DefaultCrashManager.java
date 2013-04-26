@@ -24,6 +24,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
+import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContextManager;
 import org.xwiki.contrib.crash.CrashConfiguration;
@@ -69,6 +70,9 @@ public class DefaultCrashManager implements CrashManager
     @Inject
     private ScriptServiceManager scriptServiceManager;
 
+    @Inject
+    private ComponentManager componentManager;
+
     private XWikiPluginLifecycle lifecycle;
 
     @Override
@@ -87,6 +91,7 @@ public class DefaultCrashManager implements CrashManager
             componentReferences.referenceSerializer = this.referenceSerializer;
             componentReferences.stubContextProvider = this.stubContextProvider;
             componentReferences.scriptServiceManager = this.scriptServiceManager;
+            componentReferences.componentManager = this.componentManager;
 
             this.lifecycle =
                 new XWikiPluginLifecycle(Thread.currentThread().getContextClassLoader(), componentReferences);
