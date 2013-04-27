@@ -103,7 +103,14 @@ public class XWikiPluginLifecycle extends PluginLifeCycle
 
         props.setProperty("crash.ssh.port", "" + this.componentReferences.configuration.getSSHPort());
 
-        props.setProperty("crash.auth", "XWikiAuthentication");
+        // Initialize Authentication bridge between CRaSH and XWiki.
+        // HACK till Julien refactors CRaSH in order for the CRaSH Auth plugin to support ssh-key authentication :)
+        if (this.componentReferences.configuration.getAuthentication().equals("key")) {
+            props.setProperty("crash.auth.authorized.keypath",
+                this.componentReferences.configuration.getSSHKeyLocation());
+        } else {
+            props.setProperty("crash.auth", "XWikiAuthentication");
+        }
 
         // Register our configuration
         setConfig(props);

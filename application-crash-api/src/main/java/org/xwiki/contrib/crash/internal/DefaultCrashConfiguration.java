@@ -30,26 +30,34 @@ public class DefaultCrashConfiguration implements CrashConfiguration
 {
     private static final String PREFIX = "crash.";
 
+    private static final String SSH_PREFIX = PREFIX + "ssh.";
+
     @Inject
     public ConfigurationSource configurationSource;
 
     @Override public int getSSHPort()
     {
-        return this.configurationSource.getProperty(PREFIX + "ssh.port", 2000);
+        return this.configurationSource.getProperty(SSH_PREFIX + "port", 2000);
+    }
+
+    @Override
+    public String getAuthentication()
+    {
+        return this.configurationSource.getProperty(SSH_PREFIX + "auth", "all");
     }
 
     @Override public String getSSHUserName()
     {
-        return this.configurationSource.getProperty(PREFIX + "ssh.username");
+        return this.configurationSource.getProperty(SSH_PREFIX + "auth.simple.username");
     }
 
     @Override public String getSSHPassword()
     {
-        return this.configurationSource.getProperty(PREFIX + "ssh.password");
+        return this.configurationSource.getProperty(SSH_PREFIX + "auth.simple.password");
     }
 
-    @Override public String getAuthentication()
+    @Override public String getSSHKeyLocation()
     {
-        return this.configurationSource.getProperty(PREFIX + "authentication", "all");
+        return this.configurationSource.getProperty(SSH_PREFIX + "auth.key.location");
     }
 }

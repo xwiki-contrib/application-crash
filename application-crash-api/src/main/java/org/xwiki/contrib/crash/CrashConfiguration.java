@@ -32,5 +32,11 @@ public interface CrashConfiguration
 
     String getSSHPassword();
 
+    /**
+     * @return the configured authentication method (eg "simple" for username/password, "xwiki" for XWiki-based
+     *         authentication, "key" for key-based authentication)
+     */
     String getAuthentication();
+
+    String getSSHKeyLocation();
 }
