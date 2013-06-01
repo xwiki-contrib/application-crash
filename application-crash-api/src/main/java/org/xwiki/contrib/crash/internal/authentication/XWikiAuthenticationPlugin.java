@@ -15,19 +15,24 @@ public class XWikiAuthenticationPlugin extends CRaSHPlugin<AuthenticationPlugin>
     }
 
     @Override
-    public boolean authenticate(String username, String password) throws Exception
-    {
+    public Class getCredentialType() {
+        return String.class;
+    }
+
+    @Override
+    public boolean authenticate(String username, Object password) throws Exception {
         boolean isAuthenticated = false;
         ComponentManager componentManager = (ComponentManager) getContext().getAttributes().get("componentManager");
         try {
             CrashConfiguration configuration = componentManager.getInstance(CrashConfiguration.class);
             CrashAuthentication authentication =
-                componentManager.getInstance(CrashAuthentication.class, configuration.getAuthentication());
-            isAuthenticated = authentication.authenticate(username, password, getContext());
+                    componentManager.getInstance(CrashAuthentication.class, configuration.getAuthentication());
+            isAuthenticated = authentication.authenticate(username, (String) password, getContext());
         } catch (Exception e) {
             // Nothing to do, isAuthenticated is false by default
         }
         return isAuthenticated;
+
     }
 
     @Override
