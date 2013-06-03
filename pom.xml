@@ -27,7 +27,7 @@
   <parent>
     <groupId>org.xwiki.commons</groupId>
     <artifactId>xwiki-commons-pom</artifactId>
-    <version>5.0.2</version>
+    <version>5.0.3</version>
   </parent>
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>application-crash</artifactId>
